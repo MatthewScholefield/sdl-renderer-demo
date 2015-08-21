@@ -1,1 +1,8 @@
-Program('Prata', Glob('*.cpp'))
+
+env = Environment(LIBS = '-lSDL2',
+				LIBDIRS = '-L/usr/lib/x86_64-linux-gnu',
+				CCFLAGS = '-I/usr/include/SDL2 -D_REENTRANT')
+
+env.Program('Prata', Glob('*.cpp'))
+
+Move("Prata", "#build/Prata")
