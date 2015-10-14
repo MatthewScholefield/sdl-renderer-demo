@@ -12,6 +12,16 @@ int main()
 
 	while (1)
 	{
+		SDL_Event e;
+		if (SDL_PollEvent(&e))
+		{
+			if (e.type == SDL_QUIT)
+			{
+				break;
+			}
+		}
+
+		SDL_RenderClear(renderer);
 		SDL_RenderDrawPoint(renderer, 400, 300); //Renders on middle of screen.
 		SDL_RenderPresent(renderer);
 	}
