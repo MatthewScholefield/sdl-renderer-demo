@@ -25,4 +25,10 @@ int main()
 		SDL_RenderDrawPoint(renderer, 400, 300); //Renders on middle of screen.
 		SDL_RenderPresent(renderer);
 	}
+
+	SDL_DestroyRenderer(renderer);
+	SDL_DestroyWindow(window);
+
+	SDL_Quit();
+	return 0;
 }
