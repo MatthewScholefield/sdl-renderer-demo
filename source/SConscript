@@ -1,7 +1,7 @@
 
 env = Environment(LIBS = '-lSDL2',
 				LIBDIRS = '-L/usr/lib/x86_64-linux-gnu',
-				CCFLAGS = '-I/usr/include/SDL2 -D_REENTRANT')
+				CCFLAGS = '-I/usr/include/SDL2 -D_REENTRANT -std=c++11')
 
 env.Program('Prata', Glob('*.cpp'))
 
