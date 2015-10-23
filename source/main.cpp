@@ -121,10 +121,9 @@ public:
 		return false;
 	}
 
-	void draw(SDL_Renderer *renderer)
+	void draw(Uint32 *pixels, int sx, Uint32 format)
 	{
-		SDL_SetRenderDrawColor(renderer, getRed(color), getGreen(color), getBlue(color), 255);
-		SDL_RenderDrawPoint(renderer, x, y);
+		pixels[y * sx + x] = SDL_MapRGB(SDL_AllocFormat(format), getRed(color), getGreen(color), getBlue(color));
 	}
 
 	Particle() : x(rand() % (SIZE_X / 4) + (SIZE_X * 3) / 8)
@@ -147,9 +146,17 @@ int main()
 	std::vector<Particle> particles;
 	Sint32 ticksTillAdd = 1000;
 	Uint32 now, last = 0, delta = 0;
+	//Uint32 *pixels = *(new Uint32[SIZE_X][SIZE_Y]);
+	
+	SDL_Texture * texture = SDL_CreateTexture(renderer,
+											SDL_PIXELFORMAT_ARGB8888,
+											SDL_TEXTUREACCESS_STREAMING,
+											SIZE_X, SIZE_Y);
 
 	while (1)
 	{
+		SDL_Surface surface(*SDL_GetWindowSurface(window));
+		Uint32 *pixels = (Uint32*) surface.pixels;
 		now = SDL_GetTicks();
 		delta = now - last;
 		last = now;
@@ -162,14 +169,11 @@ int main()
 				break;
 			}
 		}
-
 		if (particles.size() < MAX_PARTICLES && ticksTillAdd < 100)
 		{
 			ticksTillAdd = 200;
 			particles.push_back(Particle());
 		}
-
-		SDL_RenderClear(renderer);
 		for (auto i = 0; i < particles.size(); ++i)
 		{
 			if (particles[i].update(delta))
@@ -179,9 +183,12 @@ int main()
 				--i;
 				continue;
 			}
-			particles[i].draw(renderer);
+			particles[i].draw(pixels, SIZE_X, SDL_GetWindowPixelFormat(window));
 		}
-		SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
+		// replace the old pixels with the new ones
+		SDL_UpdateTexture(texture, NULL, pixels, SIZE_X * sizeof (Uint32));
+		SDL_RenderClear(renderer);
+		SDL_RenderCopy(renderer, texture, NULL, NULL);
 		SDL_RenderPresent(renderer);
 	}
 
